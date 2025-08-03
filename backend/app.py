@@ -58,9 +58,7 @@ def signup():
         conn.close()
 
 # 2. ログイン API
-from flask import request, jsonify, render_template  # render_template 追加
-
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
         data = request.get_json()
@@ -80,8 +78,6 @@ def login():
         else:
             return jsonify({'message': 'Invalid username, password, or role'}), 401
 
-    # ここはGETの処理（ブラウザから直接アクセスされたときなど）
-    return jsonify({'message': 'Please log in via POST method'})
 
 # 3. 生徒管理 API
 @app.route('/students', methods=['GET', 'POST'])
