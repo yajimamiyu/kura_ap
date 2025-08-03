@@ -68,12 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('ユーザーIDが見つかりません。再度ログインしてください。');
                 return;
             }
+            const newStudentData = { ...studentData, user_id: userId };
             fetch(`${API_BASE_URL}/students`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(studentData),
+                body: JSON.stringify(newStudentData),
             })
             .then(response => response.json())
             .then(data => {
