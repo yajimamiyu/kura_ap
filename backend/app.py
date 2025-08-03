@@ -5,28 +5,6 @@ from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
-def create_users_table():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL,
-            role TEXT NOT NULL
-        )
-    """)
-    conn.commit()
-    cur.close()
-    conn.close()
-
-app = Flask(__name__, template_folder='../frontend', static_folder='../frontend/static')
-CORS(app)
-
-# Flaskアプリが起動するときに実行
-create_users_table()
-
-
 # 環境変数からDB情報を取得
 DB_NAME = os.getenv("DB_NAME")       # 例: soumen_db
 DB_USER = os.getenv("DB_USER")       # 例: soumen_db_user
@@ -46,8 +24,30 @@ def get_db_connection():
         user=DB_USER,
         password=DB_PASS,
         host=DB_HOST,
-        port=DB_PORT
+        port=DB_PORT,
+        cursor_factory=RealDictCursor
     )
+
+def create_users_table():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            role TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+app = Flask(__name__, template_folder='../frontend', static_folder='../frontend/static')
+CORS(app)
+
+# Flaskアプリ起動時にテーブル作成
+create_users_table()
 
 @app.route('/')
 def index():
