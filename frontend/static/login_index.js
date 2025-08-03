@@ -1,3 +1,5 @@
+const API_BASE_URL = 'https://kura-ap.onrender.com';  // APIのURLに書き換え
+
 document.addEventListener('DOMContentLoaded', () => {
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
@@ -17,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.message === 'Login successful') {
-                sessionStorage.setItem('loggedIn', 'user');
+                sessionStorage.setItem('loggedIn', 'teacher');
                 sessionStorage.setItem('user_id', data.user_id);
                 window.location.href = 'index.html';
             } else {
