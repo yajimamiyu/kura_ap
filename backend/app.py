@@ -42,7 +42,7 @@ def login_page(role):
     roles = ['parent', 'teacher', 'admin']
     if role not in roles:
         return "不正な役割です", 404
-       template_name = f"login_{role}.html"
+    template_name = f"login_{role}.html"
     return render_template(template_name)
 
 # 1. 新規登録 API
