@@ -5,7 +5,7 @@ from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
-app = Flask(__name__, template_folder='../frontend')
+app = Flask(__name__, template_folder='../frontend', static_folder='../frontend/static')
 CORS(app)
 
 # 環境変数からDB情報を取得
