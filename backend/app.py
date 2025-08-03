@@ -58,24 +58,30 @@ def signup():
         conn.close()
 
 # 2. ログイン API
-@app.route('/login', methods=['POST'])
+from flask import request, jsonify, render_template  # render_template 追加
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    data = request.get_json()
-    username = data['username']
-    password = data['password']
-    role = data['role'] # フロントエンドからどのページのログインかを受け取る
+    if request.method == 'POST':
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+        role = data['role']  # フロントエンドからどのページのログインかを受け取る
 
-    conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute("SELECT * FROM users WHERE username = %s AND role = %s", (username, role))
-    user = cur.fetchone()
-    cur.close()
-    conn.close()
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute("SELECT * FROM users WHERE username = %s AND role = %s", (username, role))
+        user = cur.fetchone()
+        cur.close()
+        conn.close()
 
-    if user and check_password_hash(user['password'], password):
-        return jsonify({'message': 'Login successful', 'role': user['role'], 'user_id': user['id']})
-    else:
-        return jsonify({'message': 'Invalid username, password, or role'}), 401
+        if user and check_password_hash(user['password'], password):
+            return jsonify({'message': 'Login successful', 'role': user['role'], 'user_id': user['id']})
+        else:
+            return jsonify({'message': 'Invalid username, password, or role'}), 401
+
+    # ここはGETの処理（ブラウザから直接アクセスされたときなど）
+    return jsonify({'message': 'Please log in via POST method'})
 
 # 3. 生徒管理 API
 @app.route('/students', methods=['GET', 'POST'])
