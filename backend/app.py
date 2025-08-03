@@ -62,9 +62,15 @@ def signup_user():
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
-    username = data['username']
-    password = data['password']
-    role = data['role']
+    if not data:
+        return jsonify({'message': 'Invalid JSON data'}), 400
+
+    username = data.get('username')
+    password = data.get('password')
+    role = data.get('role')
+
+    if not username or not password or not role:
+        return jsonify({'message': 'Missing required fields'}), 400
 
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
@@ -76,10 +82,15 @@ def signup():
         conn.commit()
         return jsonify({'message': 'User created successfully'}), 201
     except psycopg2.IntegrityError:
+        conn.rollback()
         return jsonify({'message': 'Username already exists'}), 409
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'message': f'Error: {str(e)}'}), 500
     finally:
         cur.close()
         conn.close()
+
 
 # 2. ログイン API
 from flask import request, jsonify, render_template  # render_template 追加
