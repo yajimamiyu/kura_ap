@@ -1,15 +1,14 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect
 from flask_cors import CORS
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
-import os  # ← 環境変数を読み込むために追加
-from flask import redirect
+import os
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../frontend')
 CORS(app)
 
-# --- 環境変数からデータベース接続情報を取得 ---
+# 環境変数からDB情報を取得
 DB_NAME = os.getenv("DB_NAME")
 DB_USER = os.getenv("DB_USER")
 DB_PASS = os.getenv("DB_PASS")
@@ -17,33 +16,22 @@ DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 
 def get_db_connection():
-    """データベースへの接続を確立します"""
-    conn = psycopg2.connect(database=soumen_db,
-                            user=postgres,
-                            password=PASSWORD,
-                            host=localhost,
-                            port=5432)
-    return conn
-
-
-# --- APIエンドポイント ---
+    return psycopg2.connect(
+        database=DB_NAME,
+        user=DB_USER,
+        password=DB_PASS,
+        host=DB_HOST,
+        port=DB_PORT
+    )
 
 @app.route('/')
-def home():
-    return redirect('/select_login')
-
-@app.route('/select_login')
-def select_login():
+def index():
     return render_template('ka.html')
 
+# ここから他のAPIやルートを追加
 
-@app.route('/login_page/<role>')
-def login_page(role):
-    roles = ['parent', 'teacher', 'admin']
-    if role not in roles:
-        return "不正な役割です", 404
-    template_name = f"login_{role}.html"
-    return render_template(template_name)
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 # 1. 新規登録 API
