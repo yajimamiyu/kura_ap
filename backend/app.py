@@ -30,7 +30,7 @@ def get_db_connection():
 
 @app.route('/')
 def home():
-    return redirect('/login')
+    return redirect('/select_login')
 
 @app.route('/select_login')
 def select_login():
