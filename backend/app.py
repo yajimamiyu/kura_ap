@@ -15,6 +15,12 @@ DB_PASS = os.getenv("DB_PASS")       # 実際のパスワード
 DB_HOST = os.getenv("DB_HOST")       # 例: dpg-d27mlgvdiees73cqk800-a
 DB_PORT = os.getenv("DB_PORT")       # 例: 5432
 
+print("DB_NAME =", DB_NAME)
+print("DB_USER =", DB_USER)
+print("DB_PASS =", DB_PASS)
+print("DB_HOST =", DB_HOST)
+print("DB_PORT =", DB_PORT)
+
 def get_db_connection():
     return psycopg2.connect(
         database=DB_NAME,
