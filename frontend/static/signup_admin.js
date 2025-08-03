@@ -1,3 +1,5 @@
+const API_BASE_URL = 'https://kura-ap.onrender.com';  // 自分のAPIのURLに変更してください
+
 document.addEventListener('DOMContentLoaded', () => {
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
@@ -20,7 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             body: JSON.stringify({ username, password, role }),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => { throw new Error(text) });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.message === 'User created successfully') {
                 alert('登録が完了しました。ログインページに移動します。');
@@ -35,3 +42,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
