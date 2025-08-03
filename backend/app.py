@@ -32,7 +32,18 @@ def get_db_connection():
 def home():
     return redirect('/login')
 
+@app.route('/select_login')
+def select_login():
+    return render_template('ka.html')
 
+
+@app.route('/login_page/<role>')
+def login_page(role):
+    roles = ['parent', 'teacher', 'admin']
+    if role not in roles:
+        return "不正な役割です", 404
+       template_name = f"login_{role}.html"
+    return render_template(template_name)
 
 # 1. 新規登録 API
 @app.route('/signup', methods=['POST'])
@@ -62,6 +73,9 @@ from flask import request, jsonify, render_template  # render_template 追加
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'GET':
+        return jsonify({'message': 'Please log in via POST method'}), 405
+
     if request.method == 'POST':
         data = request.get_json()
         username = data['username']
