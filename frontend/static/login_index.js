@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username, password, role: 'user' }),
+            body: JSON.stringify({ username, password, role: 'teacher' }),
         })
         .then(response => response.json())
         .then(data => {
