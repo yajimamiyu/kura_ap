@@ -45,6 +45,18 @@ def login_index():
 def login_admin():
     return render_template('login_admin.html')
 
+@app.route('/signup_admin')
+def signup_admin():
+    return render_template('signup_admin.html')
+
+@app.route('/signup_hogosha')
+def signup_hogosha():
+    return render_template('signup_hogosha.html')
+
+@app.route('/signup_user')
+def signup_user():
+    return render_template('signup_user.html')
+
 
 # 1. 新規登録 API
 @app.route('/signup', methods=['POST'])
