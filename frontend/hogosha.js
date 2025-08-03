@@ -67,7 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('User ID not found in session storage.');
             return;
         }
-        const response = await fetch(`${API_BASE_URL}/reservations/by_user?user_id=${userId}`);
+        // 明示的にGETメソッドを指定
+        const response = await fetch(`${API_BASE_URL}/reservations/by_user?user_id=${userId}`, {
+            method: 'GET',
+        });
         const allReservations = await response.json();
 
         let day = 1;
@@ -125,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 生徒を削除する関数（未使用だが残す）
     const deleteStudent = (studentId) => {
-        fetch(`http://localhost:5001/students/${studentId}`, {
+        fetch(`${API_BASE_URL}/students/${studentId}`, {
             method: 'DELETE',
         })
         .then(() => {
