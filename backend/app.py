@@ -58,8 +58,9 @@ def signup():
         conn.close()
 
 # 2. ログイン API
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
     if request.method == 'POST':
         data = request.get_json()
         username = data['username']
