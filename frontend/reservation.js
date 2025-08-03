@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error submitting reservation:', error);
-            alert('予約中にエラーが発生しました。');
+            alert(data.message || '予約中にエラーが発生しました。');
         });
     };
 

@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sessionStorage.setItem('user_id', data.user_id);
                 window.location.href = 'hogosha.html';
             } else {
-                alert('ユーザーネームまたはパスワードが違います');
+                alert(data.message || 'ユーザーネームまたはパスワードが違います');
             }
         })
         .catch(error => {
