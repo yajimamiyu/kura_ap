@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン選択</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        .login-options {
+            margin-top: 50px;
+        }
+        .login-options a {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 30px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            width: 200px;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease;
+        }
+        .login-options a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>ログインする役割を選択してください</h1>
+
+    <div class="login-options">
+        <a href="login_hogosha.html">保護者としてログイン</a>
+        <a href="login_index.html">出席管理者としてログイン</a>
+        <a href="login_admin.html">管理者としてログイン</a>
+    </div>
+</body>
+</html>
