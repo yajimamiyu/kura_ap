@@ -31,7 +31,7 @@ def get_db_connection():
 @app.route('/')
 def home():
     return redirect('/login')
-'
+
 
 
 # 1. 新規登録 API
