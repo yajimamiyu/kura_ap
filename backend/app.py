@@ -57,6 +57,9 @@ def signup_hogosha():
 def signup_user():
     return render_template('signup_user.html')
 
+@app.route('/signup_user')
+def signup_user():
+    return render_template('signup_user.html')
 
 # 1. 新規登録 API
 @app.route('/signup', methods=['POST'])
