@@ -45,6 +45,7 @@ def login_page(role):
     template_name = f"login_{role}.html"
     return render_template(template_name)
 
+
 # 1. 新規登録 API
 @app.route('/signup', methods=['POST'])
 def signup():
