@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('User ID not found in session storage.');
             return;
         }
-        fetch(`http://localhost:5001/students?user_id=${userId}`)
+        fetch(`${API_BASE_URL}/students?user_id=${userId}`)
             .then(response => response.json())
             .then(students => {
                 studentSelect.innerHTML = '<option value="">生徒を選択してください</option>';
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             reservation_time: reservationTime
         };
 
-        fetch('http://localhost:5001/reservations', {
+        fetch(`${API_BASE_URL}/reservations`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

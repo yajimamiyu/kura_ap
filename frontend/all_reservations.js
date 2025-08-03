@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 全ての予約リストを取得して表示する関数
     const fetchAndRenderAllReservations = async () => {
         try {
-            const response = await fetch(`http://localhost:5001/reservations/all`);
+            const response = await fetch(`${API_BASE_URL}/reservations/all`);
             allReservationsData = await response.json(); // データを保存
             renderFilteredReservations(); // フィルタリングして表示
         } catch (error) {

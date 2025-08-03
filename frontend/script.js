@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 今後の予約リストを取得して表示する関数
     const renderUpcomingReservations = async () => {
         try {
-            const response = await fetch(`http://localhost:5001/reservations/all`);
+            const response = await fetch(`${API_BASE_URL}/reservations/all`);
             const reservations = await response.json();
 
             upcomingReservationsList.innerHTML = '';
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 absentButton.dataset.status = 'absent';
 
                 // 既存の出欠状況を取得してボタンをハイライト
-                const attendanceResponse = await fetch(`http://localhost:5001/attendance?student_id=${reservation.student_id}&date=${reservation.reservation_date}`);
+                const attendanceResponse = await fetch(`${API_BASE_URL}/attendance?student_id=${reservation.student_id}&date=${reservation.reservation_date}`);
                 const existingAttendance = await attendanceResponse.json();
 
                 if (existingAttendance && existingAttendance.status) {
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const status = button.dataset.status;
 
         try {
-            const response = await fetch('http://localhost:5001/attendance/mark', {
+            const response = await fetch(`${API_BASE_URL}/attendance/mark`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('User ID not found in session storage.');
             return;
         }
-        fetch(`http://localhost:5001/students?user_id=${userId}`)
+        fetch(`${API_BASE_URL}/students?user_id=${userId}`)
             .then(response => response.json())
             .then(students => {
                 studentListBody.innerHTML = '';
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('User ID not found in session storage.');
             return;
         }
-        const response = await fetch(`http://localhost:5001/reservations/by_user?user_id=${userId}`);
+        const response = await fetch(`${API_BASE_URL}/reservations/by_user?user_id=${userId}`);
         const allReservations = await response.json();
 
         let day = 1;

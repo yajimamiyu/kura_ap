@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 今後の予約リストを取得して表示する関数 (admin用)
     const renderUpcomingReservations = async () => {
         try {
-            const response = await fetch(`http://localhost:5001/reservations/all`);
+            const response = await fetch(`${API_BASE_URL}/reservations/all`);
             const reservations = await response.json();
 
             upcomingReservationsList.innerHTML = '';
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // 出欠状況を取得して表示
                 const attendanceStatusTd = document.createElement('td');
-                const attendanceResponse = await fetch(`http://localhost:5001/attendance?student_id=${reservation.student_id}&date=${reservation.reservation_date}`);
+                const response = await fetch(`${API_BASE_URL}/attendance?date=${todayString}`);
                 const existingAttendance = await attendanceResponse.json();
 
                 if (existingAttendance && existingAttendance.status) {

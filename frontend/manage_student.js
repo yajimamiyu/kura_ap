@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (studentId) {
         // 編集モード：生徒情報を読み込む
-        fetch(`http://localhost:5001/students/${studentId}`)
+        fetch(`${API_BASE_URL}/students/${studentId}`)
             .then(response => response.json())
             .then(student => {
                 studentIdInput.value = student.id;
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (currentStudentId) {
             // 更新
-            fetch(`http://localhost:5001/students/${currentStudentId}`, {
+            fetch(`${API_BASE_URL}/students/${currentStudentId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             const newStudentData = { ...studentData, user_id: userId };
-            fetch('http://localhost:5001/students', {
+            fetch(`${API_BASE_URL}/students`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
