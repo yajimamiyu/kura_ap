@@ -27,6 +27,11 @@ def get_db_connection():
 
 # --- APIエンドポイント ---
 
+@app.route('/')
+def home():
+    return 'デプロイ成功しています。個別のルートからアクセスしてください。'
+
+
 # 1. 新規登録 API
 @app.route('/signup', methods=['POST'])
 def signup():
