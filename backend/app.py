@@ -72,7 +72,7 @@ def admin():
 
 @app.route('/admin')
 def login_admin():
-    return render_template('admin.html')
+    return render_template('index.html')
    
 
 @app.route('/signup_admin')

@@ -9,6 +9,24 @@
 <body>
     <h1>出席管理アプリ</h1>
 
+    <div id="add-reservation-section">
+        <h2>予約追加</h2>
+        <form id="reservation-form">
+            <input type="text" id="student-name" placeholder="生徒名" required>
+            <input type="date" id="date" required>
+            <select id="subject" required>
+                <option value="">教科を選択</option>
+                <option value="算数">算数</option>
+                <option value="国語">国語</option>
+                <option value="理科">理科</option>
+                <option value="社会">社会</option>
+                <option value="英語">英語</option>
+            </select>
+            <input type="time" id="time" required>
+            <button type="submit">追加</button>
+        </form>
+    </div>
+
     <div id="upcoming-reservations-section">
         <h2>今後の予約</h2>
         <label for="subject-filter">教科で絞り込み:</label>
@@ -34,7 +52,7 @@
         </table>
     </div>
 
-    <script src="config.js"></script>
-    <script src="script.js"></script>
+    <script src="/static/config.js"></script>
+    <script src="/static/script.js"></script>
 </body>
 </html>
