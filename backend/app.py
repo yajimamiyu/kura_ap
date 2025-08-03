@@ -3,25 +3,27 @@ from flask_cors import CORS
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
+import os  # ← 環境変数を読み込むために追加
 
 app = Flask(__name__)
 CORS(app)
 
-# --- データベース接続情報 ---
-DB_NAME = "soumen_db"
-DB_USER = "postgres"
-DB_PASS = "PASSWORD" # ユーザーが設定したパスワード
-DB_HOST = "localhost"
-DB_PORT = "5432"
+# --- 環境変数からデータベース接続情報を取得 ---
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASS = os.getenv("DB_PASS")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
 
 def get_db_connection():
     """データベースへの接続を確立します"""
-    conn = psycopg2.connect(database=DB_NAME,
-                            user=DB_USER,
-                            password=DB_PASS,
-                            host=DB_HOST,
-                            port=DB_PORT)
+    conn = psycopg2.connect(database=soumen_db,
+                            user=postgres,
+                            password=PASSWORD,
+                            host=localhost,
+                            port=5432)
     return conn
+
 
 # --- APIエンドポイント ---
 
