@@ -4,6 +4,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 import os  # ← 環境変数を読み込むために追加
+from flask import redirect
 
 app = Flask(__name__)
 CORS(app)
@@ -29,7 +30,8 @@ def get_db_connection():
 
 @app.route('/')
 def home():
-    return 'デプロイ成功しています。個別のルートからアクセスしてください。'
+    return redirect('/login')
+'
 
 
 # 1. 新規登録 API
