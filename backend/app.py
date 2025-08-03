@@ -9,11 +9,11 @@ app = Flask(__name__, template_folder='../frontend', static_folder='../frontend/
 CORS(app)
 
 # 環境変数からDB情報を取得
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASS = os.getenv("DB_PASS")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("soumen_db")
+DB_USER = os.getenv("soumen_db_user")
+DB_PASS = os.getenv("Z2wgsMzMmAzSJPZL40vLmTZ6Rntto4qh")
+DB_HOST = os.getenv("dpg-d27mlgvdiees73cqk800-a")
+DB_PORT = os.getenv("5432")
 
 def get_db_connection():
     return psycopg2.connect(
