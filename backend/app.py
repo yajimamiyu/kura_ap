@@ -70,6 +70,11 @@ def login_index():
 def login_admin():
     return render_template('login_admin.html')
 
+@app.route('/admin')
+def login_admin():
+    return render_template('admin.html')
+   
+
 @app.route('/signup_admin')
 def signup_admin():
     return render_template('signup_admin.html')

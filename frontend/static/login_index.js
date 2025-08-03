@@ -1,5 +1,3 @@
-const API_BASE_URL = 'https://kura-ap.onrender.com';  // APIのURLに書き換え
-
 document.addEventListener('DOMContentLoaded', () => {
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
