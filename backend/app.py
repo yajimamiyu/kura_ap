@@ -67,7 +67,7 @@ def login_index():
     return render_template('login_index.html')
 
 @app.route('/login_admin')
-def login_admin():
+def admin():
     return render_template('login_admin.html')
 
 @app.route('/admin')
