@@ -33,6 +33,18 @@ def index():
 if __name__ == '__main__':
     app.run(debug=True)
 
+@app.route('/login_hogosha')
+def login_hogosha():
+    return render_template('login_hogosha.html')
+
+@app.route('/login_index')
+def login_index():
+    return render_template('login_index.html')
+
+@app.route('/login_admin')
+def login_admin():
+    return render_template('login_admin.html')
+
 
 # 1. 新規登録 API
 @app.route('/signup', methods=['POST'])
