@@ -302,29 +302,67 @@ def get_all_attendance():
     return jsonify(records)
 
 
-@app.route('/reservations', methods=['POST'])
-def create_reservation():
-    data = request.get_json()
-    student_id = data['student_id']
-    reservation_date = data['reservation_date']
-    subject = data['subject']
-    reservation_time = data['reservation_time']
+@app.route('/reservations', methods=['GET', 'POST'])
+def reservations():
+    if request.method == 'POST':
+        data = request.get_json()
+        student_id = data['student_id']
+        reservation_date = data['reservation_date']
+        subject = data['subject']
+        reservation_time = data['reservation_time']
 
-    conn = get_db_connection()
-    cur = conn.cursor()
-    try:
-        cur.execute(
-            "INSERT INTO reservations (student_id, reservation_date, subject, reservation_time) VALUES (%s, %s, %s, %s)",
-            (student_id, reservation_date, subject, reservation_time)
-        )
-        conn.commit()
-        return jsonify({'message': 'Reservation created successfully'}), 201
-    except Exception as e:
-        conn.rollback()
-        return jsonify({'message': f'Error creating reservation: {str(e)}'}), 500
-    finally:
-        cur.close()
-        conn.close()
+        conn = get_db_connection()
+        cur = conn.cursor()
+        try:
+            cur.execute(
+                "INSERT INTO reservations (student_id, reservation_date, subject, reservation_time) VALUES (%s, %s, %s, %s)",
+                (student_id, reservation_date, subject, reservation_time)
+            )
+            conn.commit()
+            return jsonify({'message': 'Reservation created successfully'}), 201
+        except Exception as e:
+            conn.rollback()
+            return jsonify({'message': f'Error creating reservation: {str(e)}'}), 500
+        finally:
+            cur.close()
+            conn.close()
+
+    elif request.method == 'GET':
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        try:
+            cur.execute("""
+                SELECT
+                    r.id,
+                    r.reservation_date,
+                    r.subject,
+                    r.reservation_time,
+                    s.last_name,
+                    s.first_name
+                FROM reservations r
+                JOIN students s ON r.student_id = s.id
+                ORDER BY r.reservation_date ASC, r.reservation_time ASC
+            """)
+            reservations = cur.fetchall()
+
+            # 生徒名を結合してわかりやすくする例
+            results = []
+            for r in reservations:
+                results.append({
+                    'id': r['id'],
+                    'student_name': f"{r['last_name']} {r['first_name']}",
+                    'date': r['reservation_date'].strftime('%Y-%m-%d'),
+                    'subject': r['subject'],
+                    'time': r['reservation_time']
+                })
+
+            return jsonify(results), 200
+        except Exception as e:
+            return jsonify({'message': f'Error fetching reservations: {str(e)}'}), 500
+        finally:
+            cur.close()
+            conn.close()
+
 
 @app.route('/reservations/by_user', methods=['GET'])
 def get_reservations_by_user():
