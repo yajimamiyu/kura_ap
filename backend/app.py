@@ -5,26 +5,12 @@ from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
-# 環境変数からDB情報を取得
-DB_NAME = os.getenv("DB_NAME")       # 例: soumen_db
-DB_USER = os.getenv("DB_USER")       # 例: soumen_db_user
-DB_PASS = os.getenv("DB_PASS")       # 実際のパスワード
-DB_HOST = os.getenv("DB_HOST")       # 例: dpg-d27mlgvdiees73cqk800-a
-DB_PORT = os.getenv("DB_PORT")       # 例: 5432
-
-print("DB_NAME =", DB_NAME)
-print("DB_USER =", DB_USER)
-print("DB_PASS =", DB_PASS)
-print("DB_HOST =", DB_HOST)
-print("DB_PORT =", DB_PORT)
-
 def get_db_connection():
     return psycopg2.connect(
-        database=DB_NAME,
-        user=DB_USER,
-        password=DB_PASS,
-        host=DB_HOST,
-        port=DB_PORT,
+        dbname='soumen_db',
+        user='soumen_db_user',
+        password='Z2wgsMzMmAzSJPZL40vLmTZ6Rntto4qh',
+        host='dpg-d27mlgvdiees73cqk800-a.singapore-postgres.render.com',
         cursor_factory=RealDictCursor
     )
 
@@ -213,6 +199,31 @@ def update_student(student_id):
         conn.close()
         return jsonify({'message': 'Student updated successfully'})
 
+@app.route('/notes', methods=['GET', 'POST'])
+def handle_notes():
+    conn = get_db_connection()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    if request.method == 'GET':
+        cur.execute("SELECT * FROM notes ORDER BY created_at DESC")
+        notes = cur.fetchall()
+        cur.close()
+        conn.close()
+        return jsonify(notes)
+
+    if request.method == 'POST':
+        data = request.get_json()
+        content = data.get('content', '')
+        if not content.strip():
+            return jsonify({'message': 'Content is required'}), 400
+
+        cur.execute("INSERT INTO notes (content) VALUES (%s)", (content,))
+        conn.commit()
+        cur.close()
+        conn.close()
+        return jsonify({'message': 'Note saved'}), 201
+
+
 @app.route('/students/<int:student_id>', methods=['DELETE'])
 def delete_student(student_id):
     conn = get_db_connection()
@@ -301,30 +312,53 @@ def get_all_attendance():
     conn.close()
     return jsonify(records)
 
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import psycopg2
+from psycopg2.extras import RealDictCursor
+import os
 
-@app.route('/reservations', methods=['POST'])
-def create_reservation():
-    data = request.get_json()
-    student_id = data['student_id']
-    reservation_date = data['reservation_date']
-    subject = data['subject']
-    reservation_time = data['reservation_time']
+app = Flask(__name__)
+CORS(app)
 
+def get_db_connection():
+    return psycopg2.connect(
+        dbname='soumen_db',
+        user='soumen_db_user',
+        password='Z2wgsMzMmAzSJPZL40vLmTZ6Rntto4qh',
+        host='dpg-d27mlgvdiees73cqk800-a.singapore-postgres.render.com',
+        cursor_factory=RealDictCursor
+    )
+
+@app.route('/reservations', methods=['GET', 'POST'])
+def reservations():
     conn = get_db_connection()
     cur = conn.cursor()
-    try:
-        cur.execute(
-            "INSERT INTO reservations (student_id, reservation_date, subject, reservation_time) VALUES (%s, %s, %s, %s)",
-            (student_id, reservation_date, subject, reservation_time)
-        )
+
+    if request.method == 'POST':
+        data = request.get_json()
+        student = data.get('student_name')
+        date = data.get('date')
+        subject = data.get('subject')
+        time = data.get('time')
+
+        cur.execute("""
+            INSERT INTO reservations (student_name, date, subject, time)
+            VALUES (%s, %s, %s, %s)
+        """, (student, date, subject, time))
         conn.commit()
-        return jsonify({'message': 'Reservation created successfully'}), 201
-    except Exception as e:
-        conn.rollback()
-        return jsonify({'message': f'Error creating reservation: {str(e)}'}), 500
-    finally:
         cur.close()
         conn.close()
+        return jsonify({'message': '予約を保存しました'})
+
+    else:  # GET
+        cur.execute("SELECT * FROM reservations ORDER BY date, time")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        return jsonify(rows)
+
+
 
 @app.route('/reservations/by_user', methods=['GET'])
 def get_reservations_by_user():
