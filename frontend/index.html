@@ -1,119 +1,59 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>出席管理アプリ</title>
-  <link rel="stylesheet" href="/static/style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>出席管理アプリ</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>出席管理アプリ</h1>
+    <h1>出席管理アプリ</h1>
 
-  <!-- 入力フォーム -->
-  <div id="reservation-form">
-    <h2>予約を追加</h2>
-    <label>生徒名: <input type="text" id="student-name" /></label><br>
-    <label>日付: <input type="date" id="date" /></label><br>
-    <label>教科: 
-      <select id="subject">
-        <option value="算数">算数</option>
-        <option value="国語">国語</option>
-        <option value="理科">理科</option>
-        <option value="社会">社会</option>
-        <option value="英語">英語</option>
-      </select>
-    </label><br>
-    <label>時間: <input type="time" id="time" /></label><br>
-    <button onclick="submitReservation()">予約追加</button>
-  </div>
+    <div id="add-reservation-section">
+        <h2>予約追加</h2>
+        <form id="reservation-form">
+            <input type="text" id="student-name" placeholder="生徒名" required>
+            <input type="date" id="date" required>
+            <select id="subject" required>
+                <option value="">教科を選択</option>
+                <option value="算数">算数</option>
+                <option value="国語">国語</option>
+                <option value="理科">理科</option>
+                <option value="社会">社会</option>
+                <option value="英語">英語</option>
+            </select>
+            <input type="time" id="time" required>
+            <button type="submit">追加</button>
+        </form>
+    </div>
 
-  <!-- フィルターとテーブル表示 -->
-  <div id="upcoming-reservations-section">
-    <h2>今後の予約</h2>
-    <label for="subject-filter">教科で絞り込み:</label>
-    <select id="subject-filter" onchange="filterReservations()">
-      <option value="all">全て</option>
-      <option value="算数">算数</option>
-      <option value="国語">国語</option>
-      <option value="理科">理科</option>
-      <option value="社会">社会</option>
-      <option value="英語">英語</option>
-    </select>
+    <div id="upcoming-reservations-section">
+        <h2>今後の予約</h2>
+        <label for="subject-filter">教科で絞り込み:</label>
+        <select id="subject-filter">
+            <option value="all">全て</option>
+            <option value="算数">算数</option>
+            <option value="国語">国語</option>
+            <option value="理科">理科</option>
+            <option value="社会">社会</option>
+            <option value="英語">英語</option>
+        </select>
+        <table id="upcoming-reservations-table">
+            <thead>
+                <tr>
+                    <th>生徒名</th>
+                    <th>日付</th>
+                    <th>教科</th>
+                    <th>時間</th>
+                    <th>出席確認</th>
+                </tr>
+            </thead>
+            <tbody id="upcoming-reservations-list"></tbody>
+        </table>
+    </div>
 
-    <table id="upcoming-reservations-table" border="1">
-      <thead>
-        <tr>
-          <th>生徒名</th>
-          <th>日付</th>
-          <th>教科</th>
-          <th>時間</th>
-        </tr>
-      </thead>
-      <tbody id="upcoming-reservations-list"></tbody>
-    </table>
-  </div>
-
-  <script>
-    let reservations = [];
-
-    function fetchReservations() {
-      fetch('/reservations')
-        .then(response => response.json())
-        .then(data => {
-          reservations = data;
-          displayReservations(data);
-        });
-    }
-
-    function submitReservation() {
-      const student_name = document.getElementById('student-name').value;
-      const date = document.getElementById('date').value;
-      const subject = document.getElementById('subject').value;
-      const time = document.getElementById('time').value;
-
-      if (!student_name || !date || !subject || !time) {
-        alert("すべての項目を入力してください");
-        return;
-      }
-
-      fetch('/reservations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ student_name, date, subject, time })
-      })
-      .then(response => response.json())
-      .then(data => {
-        fetchReservations(); // 再取得
-        document.getElementById('student-name').value = '';
-        document.getElementById('date').value = '';
-        document.getElementById('time').value = '';
-      });
-    }
-
-    function displayReservations(data) {
-      const tbody = document.getElementById('upcoming-reservations-list');
-      tbody.innerHTML = '';
-      data.forEach(res => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${res.student_name}</td>
-          <td>${res.date}</td>
-          <td>${res.subject}</td>
-          <td>${res.time}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function filterReservations() {
-      const selectedSubject = document.getElementById('subject-filter').value;
-      const filtered = selectedSubject === 'all'
-        ? reservations
-        : reservations.filter(r => r.subject === selectedSubject);
-      displayReservations(filtered);
-    }
-
-    document.addEventListener('DOMContentLoaded', fetchReservations);
-  </script>
+    <script src="/static/config.js"></script>
+    <script src="/static/script.js"></script>
 </body>
 </html>
+
