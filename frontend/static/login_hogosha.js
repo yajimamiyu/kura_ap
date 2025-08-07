@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.result === 'success') {
+                sessionStorage.setItem('loggedIn', 'hogosha'); // 追加
+                sessionStorage.setItem('user_id', 'hogosha_user'); // 仮のユーザーIDを追加
                 alert('ログインに成功しました。');
                 window.location.href = '/hogosha';
             } else {

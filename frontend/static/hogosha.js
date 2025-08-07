@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 簡単なログインチェック
     const loggedIn = sessionStorage.getItem('loggedIn');
     if (loggedIn !== 'hogosha') {
-        window.location.href = 'login_hogosha.html';
+        window.location.href = '/login_hogosha';
         return;
     }
 
