@@ -4,24 +4,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginButton = document.getElementById('login-button');
 
     loginButton.addEventListener('click', () => {
-        const username = usernameInput.value;
-        const password = passwordInput.value;
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
 
-        fetch(`${API_BASE_URL}/login`, {
+        if (!username || !password) {
+            alert('ユーザーネームとパスワードを入力してください');
+            return;
+        }
+
+        // app.pyの新しいエンドポイントにPOSTリクエストを送信
+        fetch(`${API_BASE_URL}/login_hogosha_gas`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ username, password, role: 'hogosha' }),
+            body: JSON.stringify({ username, password })
         })
         .then(response => response.json())
         .then(data => {
-            if (data.message === 'Login successful') {
-                sessionStorage.setItem('loggedIn', 'hogosha');
-                sessionStorage.setItem('user_id', data.user_id);
+            if (data.result === 'success') {
+                alert('ログインに成功しました。');
                 window.location.href = 'hogosha.html';
             } else {
-                alert(data.message || 'ユーザーネームまたはパスワードが違います');
+                alert(data.message || 'ログインに失敗しました。');
             }
         })
         .catch(error => {

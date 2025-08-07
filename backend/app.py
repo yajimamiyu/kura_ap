@@ -4,6 +4,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+import requests # 追加
 
 # 環境変数からDB情報を取得
 DB_NAME = os.getenv("DB_NAME")       # 例: soumen_db
@@ -124,6 +125,7 @@ def signup():
 
 # 2. ログイン API
 from flask import request, jsonify, render_template  # render_template 追加
+import requests # 追加
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -150,6 +152,35 @@ def login():
 
     # ここはGETの処理（ブラウザから直接アクセスされたときなど）
     return jsonify({'message': 'Please log in via POST method'})
+
+# GAS経由の保護者ログインAPI
+@app.route('/login_hogosha_gas', methods=['POST'])
+def login_hogosha_gas():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({'result': 'error', 'message': 'ユーザーネームとパスワードを入力してください'}), 400
+
+    # Google Apps ScriptのウェブアプリURL
+    gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+
+    try:
+        # GASにGETリクエストを送信して認証を依頼
+        # GASのdoGet関数がURLパラメータを期待するため、paramsを使用
+        response = requests.get(gas_url, params={'username': username, 'password': password})
+        response.raise_for_status() # HTTPエラーがあれば例外を発生させる
+
+        gas_result = response.json()
+        return jsonify(gas_result), 200
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error communicating with GAS: {e}")
+        return jsonify({'result': 'error', 'message': '認証サービスとの通信エラーが発生しました。'}), 500
+    except ValueError:
+        print(f"GAS returned non-JSON response: {response.text}")
+        return jsonify({'result': 'error', 'message': '認証サービスからの応答が不正です。'}), 500
 
 # 3. 生徒管理 API
 @app.route('/students', methods=['GET', 'POST'])
