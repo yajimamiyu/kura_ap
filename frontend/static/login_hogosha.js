@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             if (data.result === 'success') {
                 alert('ログインに成功しました。');
-                window.location.href = 'hogosha.html';
+                window.location.href = '/hogosha';
             } else {
                 alert(data.message || 'ログインに失敗しました。');
             }
