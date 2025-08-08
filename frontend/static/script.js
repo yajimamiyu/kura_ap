@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('reservation-form');
     const tableBody = document.getElementById('upcoming-reservations-list');
     const subjectFilter = document.getElementById('subject-filter');
-    const exportButton = document.getElementById('export-to-sheet');
     const gasUrl = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec';
 
     const reservations = []; // 配列で予約を管理
@@ -18,28 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
         reservations.push(newReservation);
         renderReservations();
         form.reset(); // フォームをクリア
-    });
 
-    subjectFilter.addEventListener('change', () => {
-        renderReservations();
-    });
-
-    exportButton.addEventListener('click', () => {
-        const selectedSubject = subjectFilter.value;
-        const filteredReservations = reservations
-            .filter(r => selectedSubject === 'all' || r.subject === selectedSubject);
-
-        if (filteredReservations.length === 0) {
-            alert('エクスポートするデータがありません。');
-            return;
-        }
-
-        const dataToExport = filteredReservations.map(r => ({
-            studentName: r.name,
-            date: r.date,
-            subject: r.subject,
-            time: r.time
-        }));
+        const dataToExport = [{
+            studentName: newReservation.name,
+            date: newReservation.date,
+            subject: newReservation.subject,
+            time: newReservation.time
+        }];
 
         fetch(gasUrl, {
             method: 'POST',
@@ -50,12 +34,16 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify(dataToExport)
         })
         .then(() => {
-             alert('スプレッドシートへのエクスポートをリクエストしました。');
+             alert('予約を追加し、スプレッドシートにエクスポートしました。');
         })
         .catch(error => {
             console.error('Error:', error);
             alert('エクスポート中にエラーが発生しました。');
         });
+    });
+
+    subjectFilter.addEventListener('change', () => {
+        renderReservations();
     });
 
     function renderReservations() {
@@ -79,4 +67,3 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 });
-
