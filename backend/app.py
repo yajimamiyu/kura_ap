@@ -9,9 +9,42 @@ CORS(app)
 def index():
     return render_template('ka.html')
 
-@app.route('/login_hogosha')
+@app.route('/login_hogosha', methods=['GET', 'POST'])
 def login_hogosha():
+    if request.method == 'POST':
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+
+        gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+        params = {
+            'username': username,
+            'password': password
+        }
+
+        try:
+            response_gas = requests.get(gas_url, params=params)
+            response_gas.raise_for_status()
+            try:
+                gas_data = response_gas.json()
+            except ValueError:
+                # HTMLなどが返ってきた場合
+                return jsonify({
+                    'result': 'error',
+                    'message': 'Invalid response from GAS (not JSON)'
+                }), 500
+
+            return jsonify(gas_data)
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error contacting GAS: {e}")
+            return jsonify({
+                'result': 'error',
+                'message': 'Could not connect to authentication service.'
+            }), 500
+
     return render_template('login_hogosha.html')
+
 
 @app.route('/login_index')
 def login_index():

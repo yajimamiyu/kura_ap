@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // app.pyの新しいエンドポイントにPOSTリクエストを送信
-        fetch(`${API_BASE_URL}/login_hogosha_gas`, {
+        fetch(`${API_BASE_URL}/login_hogosha`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
