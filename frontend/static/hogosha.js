@@ -138,15 +138,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     addNewStudentButton.addEventListener('click', () => {
-        window.location.href = 'manage_student.html';
+        window.location.href = '/manage_student';
     });
 
     editExistingStudentButton.addEventListener('click', () => {
-        window.location.href = 'select_student_to_edit.html';
+        window.location.href = '/select_student_to_edit';
     });
 
     goToReservationButton.addEventListener('click', () => {
-        window.location.href = 'reservation.html';
+        window.location.href = '/reservation';
     });
 
     prevMonthButton.addEventListener('click', () => {

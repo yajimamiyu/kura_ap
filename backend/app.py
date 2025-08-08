@@ -92,6 +92,18 @@ def signup_user():
 def hogosha():
     return render_template('hogosha.html')
 
+@app.route('/manage_student')
+def manage_student():
+    return render_template('manage_student.html')
+
+@app.route('/select_student_to_edit')
+def select_student_to_edit():
+    return render_template('select_student_to_edit.html')
+
+@app.route('/reservation')
+def reservation():
+    return render_template('reservation.html')
+
 
 # 1. 新規登録 API
 @app.route('/signup', methods=['POST'])
