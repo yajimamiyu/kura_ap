@@ -1,0 +1,15 @@
+#-*- mode: gitignore -*-
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+venv/
+env/
+
+# Credentials
+credentials.json
