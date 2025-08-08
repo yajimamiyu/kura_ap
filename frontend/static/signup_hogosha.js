@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // 元々のバックエンドへの登録処理
-        fetch(`${API_BASE_URL}/signup`, {
+        fetch(`${API_BASE_URL}/signup_hogosha`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
