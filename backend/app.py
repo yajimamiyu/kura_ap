@@ -11,8 +11,6 @@ import requests # 追加
 app = Flask(__name__, template_folder='../frontend', static_folder='../frontend/static')
 CORS(app)
 
-# Flaskアプリ起動時にテーブル作成
-create_users_table()
 
 @app.route('/')
 def index():
