@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 alert(data.message);
-                window.location.href = 'hogosha.html'; // 一覧ページに戻る
+                window.location.href = '/hogosha'; // 一覧ページに戻る
             })
             .catch(error => console.error('Error updating student:', error));
         } else {
@@ -79,7 +79,19 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 alert(data.message);
-                window.location.href = 'hogosha.html'; // 一覧ページに戻る
+                window.location.href = '/hogosha'; // 一覧ページに戻る
+
+                // ▼▼▼ 追加: GASにも生徒データを送信 ▼▼▼
+                const gasUrl = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'; // あなたのGASウェブアプリURL
+                fetch(gasUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(studentData) // user_idはGASには不要なので除外
+                }).catch(err => console.error('GAS Student Data Error:', err));
+                // ▲▲▲ 追加ここまで ▲▲▲
             })
             .catch(error => console.error('Error adding student:', error));
         }
