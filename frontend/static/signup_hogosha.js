@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // ▲▲▲ 追加ここまで ▲▲▲
 
                 alert('登録が完了しました。ログインページに移動します。');
-                window.location.href = 'login_hogosha.html';
+                window.location.href = '/login_hogosha';
             } else {
                 alert(data.message);
             }
