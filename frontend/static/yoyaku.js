@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('yoyaku-form');
-    const gasUrl = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec';
-
+    const gasUrl = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
