@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予約追加</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>予約追加</h1>
+    <form id="yoyaku-form">
+        <input type="text" id="student-name" placeholder="名前" required>
+        <input type="text" id="grade" placeholder="学年" required>
+        <input type="date" id="date" required>
+        <select id="subject" required>
+            <option value="">教科を選択</option>
+            <option value="算数">算数</option>
+            <option value="国語">国語</option>
+            <option value="理科">理科</option>
+            <option value="社会">社会</option>
+            <option value="英語">英語</option>
+        </select>
+        <select id="time-select" required>
+            <option value="">時間を選択</option>
+            <option value="09:00">09:00</option>
+            <option value="10:00">10:00</option>
+            <option value="11:00">11:00</option>
+            <option value="13:00">13:00</option>
+            <option value="14:00">14:00</option>
+            <option value="15:00">15:00</option>
+        </select>
+        <button type="submit">追加</button>
+    </form>
+    <br>
+    <a href="/home.html">ホームに戻る</a>
+
+    <script src="/static/yoyaku.js"></script>
+</body>
+</html>

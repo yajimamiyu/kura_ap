@@ -8,91 +8,114 @@ CORS(app)
 
 @app.route('/')
 def index():
-    return render_template('ka.html')
+    return render_template('home.html')
 
-@app.route('/login_hogosha', methods=['GET', 'POST'])
-def login_hogosha():
-    if request.method == 'POST':
-        data = request.get_json()
-        username = data.get('username')
-        password = data.get('password')
+@app.route('/home.html')
+def home():
+    return render_template('home.html')
 
-        gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
-        params = {
-            'username': username,
-            'password': password
-        }
+@app.route('/yoyaku')
+def yoyaku():
+    return render_template('yoyaku.html')
 
-        try:
-            response_gas = requests.get(gas_url, params=params)
-            response_gas.raise_for_status()
-            try:
-                gas_data = response_gas.json()
-            except ValueError:
-                # HTMLなどが返ってきた場合
-                return jsonify({
-                    'result': 'error',
-                    'message': 'Invalid response from GAS (not JSON)'
-                }), 500
+@app.route('/yoyaku_kakunin')
+def yoyaku_kakunin():
+    return render_template('yoyaku_kakunin.html')
 
-            return jsonify(gas_data)
+@app.route('/syuseki')
+def syuseki():
+    return render_template('syuseki.html')
 
-        except requests.exceptions.RequestException as e:
-            print(f"Error contacting GAS: {e}")
-            return jsonify({
-                'result': 'error',
-                'message': 'Could not connect to authentication service.'
-            }), 500
+@app.route('/syuseki_kakunin')
+def syuseki_kakunin():
+    return render_template('syuseki_kakunin.html')
 
-    return render_template('login_hogosha.html')
+@app.route('/add_attendance_from_yoyaku', methods=['POST'])
+def add_attendance_from_yoyaku():
+    data = request.get_json()
+    gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+    data['action'] = 'add_attendance_from_yoyaku'
 
+    try:
+        response_gas = requests.post(gas_url, json=data)
+        response_gas.raise_for_status()
+        gas_data = response_gas.json()
+        return jsonify(gas_data)
 
-@app.route('/login_index')
-def login_index():
-    return render_template('login_index.html')
+    except requests.exceptions.RequestException as e:
+        print(f"Error contacting GAS: {e}")
+        return jsonify({'result': 'error', 'message': 'Could not connect to the service.'}), 500
+    except ValueError:
+        return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
 
-@app.route('/login_admin')
-def login_admin_page():
-    return render_template('login_admin.html')
+@app.route('/get_yoyaku_data')
+def get_yoyaku_data():
+    gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+    params = {'action': 'get_yoyaku_data'}
 
-@app.route('/admin')
-def admin_page():
-    return render_template('index.html')
-   
-@app.route('/signup_admin')
-def signup_admin():
-    return render_template('signup_admin.html')
+    try:
+        response_gas = requests.get(gas_url, params=params)
+        response_gas.raise_for_status()
+        gas_data = response_gas.json()
+        return jsonify(gas_data)
 
-@app.route('/signup_hogosha', methods=['GET', 'POST'])
-def signup_hogosha():
-    if request.method == 'POST':
-        data = request.get_json()
-        # ここにデータベースへの保存処理などを追加する
-        print(f"Received data: {data}") # サーバーのコンソールでデータを確認
-        return jsonify({'message': 'User created successfully'}), 201
-    else:
-        # GETリクエストの場合は、登録ページを表示
-        return render_template('signup_hogosha.html')
+    except requests.exceptions.RequestException as e:
+        print(f"Error contacting GAS: {e}")
+        return jsonify({'result': 'error', 'message': 'Could not connect to the service.'}), 500
+    except ValueError:
+        return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
 
-@app.route('/signup_user')
-def signup_user():
-    return render_template('signup_user.html')
+@app.route('/get_confirmed_attendance')
+def get_confirmed_attendance():
+    gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+    params = {'action': 'get_confirmed_attendance'}
 
-@app.route('/hogosha')
-def hogosha():
-    return render_template('hogosha.html')
+    try:
+        response_gas = requests.get(gas_url, params=params)
+        response_gas.raise_for_status()
+        gas_data = response_gas.json()
+        return jsonify(gas_data)
 
-@app.route('/manage_student')
-def manage_student():
-    return render_template('manage_student.html')
+    except requests.exceptions.RequestException as e:
+        print(f"Error contacting GAS: {e}")
+        return jsonify({'result': 'error', 'message': 'Could not connect to the service.'}), 500
+    except ValueError:
+        return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
 
-@app.route('/select_student_to_edit')
-def select_student_to_edit():
-    return render_template('select_student_to_edit.html')
+@app.route('/update_attendance', methods=['POST'])
+def update_attendance():
+    data = request.get_json()
+    gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+    data['action'] = 'update_attendance'
 
-@app.route('/reservation')
-def reservation():
-    return render_template('reservation.html')
+    try:
+        response_gas = requests.post(gas_url, json=data)
+        response_gas.raise_for_status()
+        gas_data = response_gas.json()
+        return jsonify(gas_data)
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error contacting GAS: {e}")
+        return jsonify({'result': 'error', 'message': 'Could not connect to the attendance service.'}), 500
+    except ValueError:
+        return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
+
+@app.route('/get_attendance')
+def get_attendance():
+    gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+    params = {'action': 'get_attendance'}
+
+    try:
+        response_gas = requests.get(gas_url, params=params)
+        response_gas.raise_for_status()
+        gas_data = response_gas.json()
+        return jsonify(gas_data)
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error contacting GAS: {e}")
+        return jsonify({'result': 'error', 'message': 'Could not connect to the attendance service.'}), 500
+    except ValueError:
+        return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
 
 # ここから他のAPIやルートを追加
 
