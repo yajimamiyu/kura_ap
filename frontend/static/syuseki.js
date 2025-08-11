@@ -134,13 +134,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to send attendance update to backend
     const updateAttendance = async (rowIndex, status) => {
+        const rowData = allReservationsData[rowIndex];
+
         try {
             const response = await fetch('/api/update_attendance', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ action: 'update_attendance', rowIndex: rowIndex, status: status })
+                body: JSON.stringify({ 
+                    action: 'update_attendance', 
+                    rowIndex: rowIndex, 
+                    status: status,
+                    rowData: rowData // Add the full row data
+                })
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -149,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.result === 'success') {
                 console.log('Attendance updated successfully:', result.message);
                 // Optionally, provide user feedback
-                alert('出席状況を更新しました！');
+                alert(result.message || '出席状況を更新しました！');
                 // Re-fetch and re-render to show updated status
                 fetchSyusekiList(); 
             } else {
