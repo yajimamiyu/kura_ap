@@ -119,6 +119,7 @@ def get_attendance():
 
 @app.route('/api/get_all_yoyaku')
 def get_all_yoyaku():
+    print("--- /api/get_all_yoyaku was called ---") # For debugging
     gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
     # 新しいdoGetに合わせて、'sheet'パラメータで「予約」シートを指定
     params = {'sheet': '予約'}
@@ -183,7 +184,7 @@ def get_attendance_data():
     gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
     # doGetを呼び出すため、パラメータをURLに追加
     # 'sheet'パラメータで「出席」シートを指定
-    params = {'sheet': '予約'}
+    params = {'sheet': '出席'}
     
     try:
         response = requests.get(gas_url, params=params)
