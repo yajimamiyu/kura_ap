@@ -134,4 +134,40 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     fetchSyusekiList(); // Renamed function call
+
+    const saveButton = document.getElementById('save-to-new-sheet-button');
+    if (saveButton) {
+        saveButton.addEventListener('click', async () => {
+            try {
+                // Re-fetch the latest data to ensure we have the most current attendance statuses
+                const response = await fetch('/api/get_all_yoyaku');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const dataToSave = await response.json();
+
+                // Send this data to a new backend endpoint to save to a new sheet
+                const saveResponse = await fetch('/api/save_syuseki_to_new_sheet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(dataToSave)
+                });
+
+                if (!saveResponse.ok) {
+                    throw new Error(`HTTP error! status: ${saveResponse.status}`);
+                }
+                const result = await saveResponse.json();
+                if (result.result === 'success') {
+                    alert('データを新しいシートに保存しました！');
+                } else {
+                    alert('データの保存に失敗しました: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error saving data to new sheet:', error);
+                alert('データの保存中にエラーが発生しました。');
+            }
+        });
+    }
 });
