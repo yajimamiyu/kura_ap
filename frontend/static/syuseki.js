@@ -226,8 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Error saving filtered data:', error);
-                alert('フィルターされたデータの保存中にエラーが発生しました。
-' + error.message);
+                alert('フィルターされたデータの保存中にエラーが発生しました。' + error.message);
             }
         });
     }
