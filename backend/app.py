@@ -27,8 +27,8 @@ def syuseki():
     return render_template('syuseki.html')
 
 @app.route('/syuseki_kakunin')
-def syuseki():
-    return render_template('syuseki_kakunin.html') 
+def syuseki_kakunin():
+    return render_template('syuseki_kakunin.html')
 
 @app.route('/add_attendance_from_yoyaku', methods=['POST'])
 def add_attendance_from_yoyaku():
