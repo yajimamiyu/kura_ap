@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             <th>日付</th>
                             <th>教科</th>
                             <th>時間</th>
-                            <th>出席</th> <!-- New column header -->
+                            <th>出席</th>
+                            <th>操作</th> <!-- New column header for save button -->
                         </tr>
                     </thead>
                     <tbody>
@@ -81,17 +82,21 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <option value="欠席" ${attendanceStatus === '欠席' ? 'selected' : ''}>欠席</option>
                             </select>
                         </td>
+                        <td>
+                            <button class="save-attendance-button">保存</button>
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 }
                 syusekiListContainer.innerHTML = ''; // 読み込み中... をクリア
                 syusekiListContainer.appendChild(table);
 
-                // Add event listeners for attendance selects
-                document.querySelectorAll('.attendance-select').forEach(select => {
-                    select.addEventListener('change', async (event) => {
-                        const selectedStatus = event.target.value;
-                        const rowIndex = event.target.closest('tr').dataset.rowIndex;
+                // Add event listeners for save buttons
+                document.querySelectorAll('.save-attendance-button').forEach(button => {
+                    button.addEventListener('click', async (event) => {
+                        const row = event.target.closest('tr');
+                        const rowIndex = row.dataset.rowIndex;
+                        const selectedStatus = row.querySelector('.attendance-select').value;
                         // Call a function to update attendance in the backend
                         await updateAttendance(rowIndex, selectedStatus);
                     });
