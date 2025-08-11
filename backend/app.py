@@ -166,6 +166,24 @@ def save_syuseki_to_new_sheet():
     except ValueError:
         return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
 
+@app.route('/api/save_to_attendance_sheet', methods=['POST'])
+def save_to_attendance_sheet():
+    data = request.get_json()
+    gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+    data_to_send = {'action': 'save_to_attendance_sheet', 'data': data} # Wrap data in 'data' key for GAS
+
+    try:
+        response_gas = requests.post(gas_url, json=data_to_send)
+        response_gas.raise_for_status()
+        gas_data = response_gas.json()
+        return jsonify(gas_data)
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error contacting GAS: {e}")
+        return jsonify({'result': 'error', 'message': 'Could not connect to the service.'}), 500
+    except ValueError:
+        return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
+
 # ここから他のAPIやルートを追加
 
 if __name__ == '__main__':

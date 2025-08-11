@@ -146,8 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 const dataToSave = await response.json();
 
-                // Send this data to a new backend endpoint to save to a new sheet
-                const saveResponse = await fetch('/api/save_syuseki_to_new_sheet', {
+                // Send this data to a new backend endpoint to save to the attendance sheet
+                const saveResponse = await fetch('/api/save_to_attendance_sheet', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
