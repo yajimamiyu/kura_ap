@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const syusekiListContainer = document.getElementById('syuseki-list-container');
     const reservationFilter = document.getElementById('reservation-filter');
+    const attendanceFilter = document.getElementById('attendance-filter'); // New reference
     let allReservationsData = []; // Store all fetched data for filtering
 
     // 日付のフォーマット関数
@@ -58,8 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const tr = document.createElement('tr');
                 tr.dataset.rowIndex = i; // Store original row index for updates
 
-                // Assuming attendance status is in the 6th column (index 5)
-                // After removing ID, it will be rowData[5]
                 const attendanceStatus = rowData[5] || ''; 
 
                 tr.innerHTML = `
@@ -73,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <option value="">選択してください</option>
                             <option value="出席" ${attendanceStatus === '出席' ? 'selected' : ''}>出席</option>
                             <option value="欠席" ${attendanceStatus === '欠席' ? 'selected' : ''}>欠席</option>
+                            <option value="未定" ${attendanceStatus === '未定' ? 'selected' : ''}>未定</option>
                         </select>
                     </td>
                     <td>
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            renderTable(allReservationsData); // Render initial table
+            applyFilters(); // Apply filters after fetching data
             
         } catch (error) {
             console.error('Error fetching syuseki list:', error);
@@ -164,17 +164,71 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Filter table based on dropdown selection
-    reservationFilter.addEventListener('change', (event) => {
-        const selectedIndex = event.target.value;
-        if (selectedIndex === 'all') {
-            renderTable(allReservationsData); // Show all data
-        } else {
-            // Filter to show only the selected row
-            const filteredData = [allReservationsData[0], allReservationsData[parseInt(selectedIndex)]]; // Header + selected row
-            renderTable(filteredData);
+    // Function to apply filters and render table
+    const applyFilters = () => {
+        const selectedReservationIndex = reservationFilter.value;
+        const selectedAttendanceStatus = attendanceFilter.value;
+
+        let filteredData = [allReservationsData[0]]; // Always include header
+
+        for (let i = 1; i < allReservationsData.length; i++) {
+            const rowData = allReservationsData[i];
+            const reservationMatch = (selectedReservationIndex === 'all' || parseInt(selectedReservationIndex) === i);
+            const attendanceMatch = (selectedAttendanceStatus === 'all' || rowData[5] === selectedAttendanceStatus); // rowData[5] is attendance status
+
+            if (reservationMatch && attendanceMatch) {
+                filteredData.push(rowData);
+            }
         }
-    });
+        renderTable(filteredData);
+    };
+
+    // Filter table based on dropdown selection
+    reservationFilter.addEventListener('change', applyFilters);
+    attendanceFilter.addEventListener('change', applyFilters); // New event listener
 
     fetchSyusekiList();
+
+    const saveFilterButton = document.getElementById('save-filter-button');
+    if (saveFilterButton) {
+        saveFilterButton.addEventListener('click', async () => {
+            const selectedReservationIndex = reservationFilter.value;
+            const selectedAttendanceStatus = attendanceFilter.value;
+
+            // Get currently displayed data (which is already filtered)
+            const currentTableRows = Array.from(syusekiListContainer.querySelectorAll('tbody tr'));
+            const dataToSave = [allReservationsData[0]]; // Include header
+            currentTableRows.forEach(row => {
+                const rowIndex = parseInt(row.dataset.rowIndex);
+                dataToSave.push(allReservationsData[rowIndex]);
+            });
+
+            try {
+                const response = await fetch('/api/save_filtered_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        reservationFilter: selectedReservationIndex,
+                        attendanceFilter: selectedAttendanceStatus,
+                        filteredData: dataToSave
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+                if (result.result === 'success') {
+                    alert('フィルターされたデータを新しいシートに保存しました！');
+                } else {
+                    alert('データの保存に失敗しました: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error saving filtered data:', error);
+                alert('フィルターされたデータの保存中にエラーが発生しました。
+' + error.message);
+            }
+        });
+    }
 });
