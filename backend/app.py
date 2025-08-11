@@ -26,6 +26,10 @@ def yoyaku_list():
 def syuseki():
     return render_template('syuseki.html')
 
+@app.route('/syuseki_kakunin')
+def syuseki():
+    return render_template('syuseki_kakunin.html') 
+
 @app.route('/add_attendance_from_yoyaku', methods=['POST'])
 def add_attendance_from_yoyaku():
     data = request.get_json()
@@ -172,6 +176,25 @@ def save_filtered_data():
         return jsonify({'result': 'error', 'message': 'Could not connect to the service.'}), 500
     except ValueError:
         return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
+
+@app.route('/api/get_attendance_data')
+def get_attendance_data():
+    gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+    # doGetを呼び出すため、パラメータをURLに追加
+    # 'sheet'パラメータで「出席」シートを指定
+    params = {'sheet': '出席'}
+    
+    try:
+        response = requests.get(gas_url, params=params)
+        response.raise_for_status() # エラーがあれば例外を発生させる
+        # GASからの応答がネストされている場合があるので、そのまま返す
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Error contacting GAS: {e}")
+        return jsonify(result='error', message='Could not connect to the service.'), 500
+    except ValueError:
+        # JSONデコードに失敗した場合
+        return jsonify(result='error', message='Invalid response from GAS (not JSON)'), 500
 
 # ここから他のAPIやルートを追加
 
