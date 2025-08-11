@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const yoyakuListContainer = document.getElementById('yoyaku-list-container');
+    const syusekiListContainer = document.getElementById('syuseki-list-container');
 
-    const fetchYoyakuList = async () => {
+    const fetchSyusekiList = async () => { // Renamed function
         try {
-            const response = await fetch('/api/get_all_yoyaku');
+            const response = await fetch('/api/get_all_yoyaku'); // Still fetching all yoyaku data
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <th>日付</th>
                             <th>教科</th>
                             <th>時間</th>
+                            <th>出席</th> <!-- New column header -->
                         </tr>
                     </thead>
                     <tbody>
@@ -31,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (let i = 1; i < data.length; i++) {
                     const rowData = data[i];
                     const tr = document.createElement('tr');
+                    tr.dataset.rowIndex = i; // Store original row index for updates
 
                     // 日付のフォーマット関数
                     const formatDate = (dateString) => {
@@ -62,26 +64,74 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
 
                     // データの列数に合わせて調整してください
-                    // 例: [名前, 学年, 日付, 教科, 時間] の順でデータが返されると仮定
+                    // 例: [名前, 学年, 日付, 教科, 時間, 出席状況] の順でデータが返されると仮定
+                    // rowData[5] が出席状況のデータと仮定
+                    const attendanceStatus = rowData[5] || ''; // Assuming attendance status is in the 6th column (index 5)
+
                     tr.innerHTML = `
                         <td>${rowData[0] || ''}</td>
                         <td>${rowData[1] || ''}</td>
                         <td>${formatDate(rowData[2])}</td>
                         <td>${rowData[3] || ''}</td>
                         <td>${formatTime(rowData[4])}</td>
+                        <td>
+                            <select class="attendance-select">
+                                <option value="">選択してください</option>
+                                <option value="出席" ${attendanceStatus === '出席' ? 'selected' : ''}>出席</option>
+                                <option value="欠席" ${attendanceStatus === '欠席' ? 'selected' : ''}>欠席</option>
+                            </select>
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 }
-                yoyakuListContainer.innerHTML = ''; // 読み込み中... をクリア
-                yoyakuListContainer.appendChild(table);
+                syusekiListContainer.innerHTML = ''; // 読み込み中... をクリア
+                syusekiListContainer.appendChild(table);
+
+                // Add event listeners for attendance selects
+                document.querySelectorAll('.attendance-select').forEach(select => {
+                    select.addEventListener('change', async (event) => {
+                        const selectedStatus = event.target.value;
+                        const rowIndex = event.target.closest('tr').dataset.rowIndex;
+                        // Call a function to update attendance in the backend
+                        await updateAttendance(rowIndex, selectedStatus);
+                    });
+                });
+
             } else {
-                yoyakuListContainer.innerHTML = '<p>予約データがありません。</p>';
+                syusekiListContainer.innerHTML = '<p>予約データがありません。</p>';
             }
         } catch (error) {
-            console.error('Error fetching yoyaku list:', error);
-            yoyakuListContainer.innerHTML = '<p>予約データの取得中にエラーが発生しました。</p>';
+            console.error('Error fetching syuseki list:', error);
+            syusekiListContainer.innerHTML = '<p>予約データの取得中にエラーが発生しました。</p>';
         }
     };
 
-    fetchYoyakuList();
+    // Function to send attendance update to backend
+    const updateAttendance = async (rowIndex, status) => {
+        try {
+            const response = await fetch('/api/update_attendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rowIndex: rowIndex, status: status })
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
+            if (result.result === 'success') {
+                console.log('Attendance updated successfully:', result.message);
+                // Optionally, provide user feedback
+            } else {
+                console.error('Failed to update attendance:', result.message);
+                // Optionally, provide user feedback
+            }
+        } catch (error) {
+            console.error('Error updating attendance:', error);
+            // Optionally, provide user feedback
+        }
+    };
+
+    fetchSyusekiList(); // Renamed function call
 });
