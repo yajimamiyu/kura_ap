@@ -18,18 +18,6 @@ def home():
 def yoyaku():
     return render_template('yoyaku.html')
 
-@app.route('/yoyaku_kakunin')
-def yoyaku_kakunin():
-    return render_template('yoyaku_kakunin.html')
-
-@app.route('/syuseki')
-def syuseki():
-    return render_template('syuseki.html')
-
-@app.route('/syuseki_kakunin')
-def syuseki_kakunin():
-    return render_template('syuseki_kakunin.html')
-
 @app.route('/add_attendance_from_yoyaku', methods=['POST'])
 def add_attendance_from_yoyaku():
     data = request.get_json()
