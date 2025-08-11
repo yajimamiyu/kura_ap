@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         fetch(gasUrl, {
             method: 'POST',
-            mode: 'no-cors', // CORSエラーを回避するために必要
             headers: {
                 'Content-Type': 'application/json',
             },
