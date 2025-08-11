@@ -152,16 +152,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to apply filters and render table
     const applyFilters = () => {
         const selectedReservationIndex = reservationFilter.value;
-        const selectedAttendanceStatus = attendanceFilter.value;
 
         let filteredData = [allReservationsData[0]]; // Always include header
 
         for (let i = 1; i < allReservationsData.length; i++) {
             const rowData = allReservationsData[i];
             const reservationMatch = (selectedReservationIndex === 'all' || parseInt(selectedReservationIndex) === i);
-            const attendanceMatch = (selectedAttendanceStatus === 'all' || rowData[5] === selectedAttendanceStatus); // rowData[5] is attendance status
 
-            if (reservationMatch && attendanceMatch) {
+            if (reservationMatch) { // Only consider reservation filter
                 filteredData.push(rowData);
             }
         }
@@ -170,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Filter table based on dropdown selection
     reservationFilter.addEventListener('change', applyFilters);
-    attendanceFilter.addEventListener('change', applyFilters); // New event listener
+    // attendanceFilter.addEventListener('change', applyFilters); // Removed event listener
 
     fetchSyusekiList();
 
