@@ -150,6 +150,29 @@ def update_syuseki_attendance():
 
 
 
+@app.route('/api/save_filtered_data', methods=['POST'])
+def save_filtered_data():
+    data = request.get_json()
+    gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+    data_to_send = {
+        'action': 'save_filtered_data',
+        'reservationFilter': data.get('reservationFilter'),
+        'attendanceFilter': data.get('attendanceFilter'),
+        'filteredData': data.get('filteredData')
+    }
+
+    try:
+        response_gas = requests.post(gas_url, json=data_to_send)
+        response_gas.raise_for_status()
+        gas_data = response_gas.json()
+        return jsonify(gas_data)
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error contacting GAS: {e}")
+        return jsonify({'result': 'error', 'message': 'Could not connect to the service.'}), 500
+    except ValueError:
+        return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
+
 # ここから他のAPIやルートを追加
 
 if __name__ == '__main__':

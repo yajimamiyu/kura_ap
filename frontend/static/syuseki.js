@@ -44,8 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <th>日付</th>
                         <th>教科</th>
                         <th>時間</th>
-                        <th>出席</th>
-                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -59,41 +57,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 const tr = document.createElement('tr');
                 tr.dataset.rowIndex = i; // Store original row index for updates
 
-                const attendanceStatus = rowData[5] || ''; 
-
                 tr.innerHTML = `
                     <td>${rowData[0] || ''}</td>
                     <td>${rowData[1] || ''}</td>
                     <td>${formatDate(rowData[2])}</td>
                     <td>${rowData[3] || ''}</td>
                     <td>${formatTime(rowData[4])}</td>
-                    <td>
-                        <select class="attendance-select">
-                            <option value="">選択してください</option>
-                            <option value="出席" ${attendanceStatus === '出席' ? 'selected' : ''}>出席</option>
-                            <option value="欠席" ${attendanceStatus === '欠席' ? 'selected' : ''}>欠席</option>
-                            <option value="未定" ${attendanceStatus === '未定' ? 'selected' : ''}>未定</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="save-attendance-button">保存</button>
-                    </td>
                 `;
                 tbody.appendChild(tr);
             }
             syusekiListContainer.innerHTML = ''; // 読み込み中... をクリア
             syusekiListContainer.appendChild(table);
 
-            // Add event listeners for save buttons
-            document.querySelectorAll('.save-attendance-button').forEach(button => {
-                button.addEventListener('click', async (event) => {
-                    const row = event.target.closest('tr');
-                    const rowIndex = row.dataset.rowIndex;
-                    const selectedStatus = row.querySelector('.attendance-select').value;
-                    // Call a function to update attendance in the backend
-                    await updateAttendance(rowIndex, selectedStatus);
-                });
-            });
+            // Add event listeners for save buttons (removed as columns are removed)
+            // document.querySelectorAll('.save-attendance-button').forEach(button => {
+            //     button.addEventListener('click', async (event) => {
+            //         const row = event.target.closest('tr');
+            //         const rowIndex = row.dataset.rowIndex;
+            //         const selectedStatus = row.querySelector('.attendance-select').value;
+            //         // Call a function to update attendance in the backend
+            //         await updateAttendance(rowIndex, selectedStatus);
+            //     });
+            // });
 
         } else {
             syusekiListContainer.innerHTML = '<p>予約データがありません。</p>';
@@ -134,35 +119,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Function to send attendance update to backend
-    const updateAttendance = async (rowIndex, status) => {
-        try {
-            const response = await fetch('/api/update_attendance', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ rowIndex: rowIndex, status: status })
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const result = await response.json();
-            if (result.result === 'success') {
-                console.log('Attendance updated successfully:', result.message);
-                // Optionally, provide user feedback
-                alert('出席状況を更新しました！');
-                // Re-fetch and re-render to show updated status
-                fetchSyusekiList(); 
-            } else {
-                console.error('Failed to update attendance:', result.message);
-                alert('出席状況の更新に失敗しました: ' + result.message);
-            }
-        } catch (error) {
-            console.error('Error updating attendance:', error);
-            alert('出席状況の更新中にエラーが発生しました。');
-        }
-    };
+    // Function to send attendance update to backend (removed as columns are removed)
+    // const updateAttendance = async (rowIndex, status) => {
+    //     try {
+    //         const response = await fetch('/api/update_attendance', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({ rowIndex: rowIndex, status: status })
+    //         });
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+    //         const result = await response.json();
+    //         if (result.result === 'success') {
+    //             console.log('Attendance updated successfully:', result.message);
+    //             // Optionally, provide user feedback
+    //             alert('出席状況を更新しました！');
+    //             // Re-fetch and re-render to show updated status
+    //             fetchSyusekiList(); 
+    //         } else {
+    //             console.error('Failed to update attendance:', result.message);
+    //             alert('出席状況の更新に失敗しました: ' + result.message);
+    //         }
+    //     } catch (error) {
+    //         console.error('Error updating attendance:', error);
+    //         alert('出席状況の更新中にエラーが発生しました。');
+    //     }
+    // };
 
     // Function to apply filters and render table
     const applyFilters = () => {
@@ -226,7 +211,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error('Error saving filtered data:', error);
-                alert('フィルターされたデータの保存中にエラーが発生しました。' + error.message);
+                alert('フィルターされたデータの保存中にエラーが発生しました。
+' + error.message);
             }
         });
     }
