@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fetch('/add_attendance_from_yoyaku', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'text/plain',
                 },
                 body: JSON.stringify({ 
                     action: 'add_attendance_from_yoyaku', 
