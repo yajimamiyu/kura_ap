@@ -104,8 +104,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const data = await response.json();
-            allReservationsData = data; // Store all data
+            const result = await response.json();
+
+            if (result && result.result === 'success' && Array.isArray(result.data)) {
+                allReservationsData = result.data; // Use the nested 'data' array
+            } else {
+                throw new Error(result.message || '取得したデータの形式が正しくありません。');
+            }
+
+            const data = allReservationsData; // For subsequent processing
 
             // Populate filter dropdown
             if (data && data.length > 1) { // data.length > 1 because first row is header
@@ -128,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
         } catch (error) {
             console.error('Error fetching syuseki list:', error);
-            syusekiListContainer.innerHTML = '<p>予約データの取得中にエラーが発生しました。</p>';
+            syusekiListContainer.innerHTML = `<p>予約データの取得中にエラーが発生しました: ${error.message}</p>`;
         }
     };
 
