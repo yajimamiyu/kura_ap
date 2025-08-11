@@ -18,6 +18,10 @@ def home():
 def yoyaku():
     return render_template('yoyaku.html')
 
+@app.route('/yoyaku_list')
+def yoyaku_list():
+    return render_template('yoyaku_list.html')
+
 @app.route('/add_attendance_from_yoyaku', methods=['POST'])
 def add_attendance_from_yoyaku():
     data = request.get_json()

@@ -1,0 +1,57 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const yoyakuListContainer = document.getElementById('yoyaku-list-container');
+
+    const fetchYoyakuList = async () => {
+        try {
+            const response = await fetch('/api/get_all_yoyaku');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (data && data.length > 0) {
+                // ヘッダー行をスキップしてデータを表示
+                const table = document.createElement('table');
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th>名前</th>
+                            <th>学年</th>
+                            <th>日付</th>
+                            <th>教科</th>
+                            <th>時間</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                `;
+                const tbody = table.querySelector('tbody');
+
+                // 最初の行はヘッダーと仮定してスキップ
+                for (let i = 1; i < data.length; i++) {
+                    const rowData = data[i];
+                    const tr = document.createElement('tr');
+                    // データの列数に合わせて調整してください
+                    // 例: [名前, 学年, 日付, 教科, 時間] の順でデータが返されると仮定
+                    tr.innerHTML = `
+                        <td>${rowData[0] || ''}</td>
+                        <td>${rowData[1] || ''}</td>
+                        <td>${rowData[2] || ''}</td>
+                        <td>${rowData[3] || ''}</td>
+                        <td>${rowData[4] || ''}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+                yoyakuListContainer.innerHTML = ''; // 読み込み中... をクリア
+                yoyakuListContainer.appendChild(table);
+            } else {
+                yoyakuListContainer.innerHTML = '<p>予約データがありません。</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching yoyaku list:', error);
+            yoyakuListContainer.innerHTML = '<p>予約データの取得中にエラーが発生しました。</p>';
+        }
+    };
+
+    fetchYoyakuList();
+});
