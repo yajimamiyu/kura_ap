@@ -8,6 +8,20 @@
 </head>
 <body>
     <h1>出欠一覧</h1>
+    <label for="reservation-filter">予約で絞り込む:</label>
+    <select id="reservation-filter">
+        <option value="all">すべて表示</option>
+    </select>
+    <label for="attendance-filter">出席状況で絞り込む:</label>
+    <select id="attendance-filter">
+        <option value="all">すべて</option>
+        <option value="出席">出席</option>
+        <option value="欠席">欠席</option>
+        <option value="未定">未定</option>
+    </select>
+    <br><br>
+    <button id="save-filter-button">現在のフィルターを保存</button>
+    <br><br>
     
     <div id="syuseki-list-container">
         <p>読み込み中...</p>

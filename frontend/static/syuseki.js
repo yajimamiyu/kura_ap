@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const syusekiListContainer = document.getElementById('syuseki-list-container');
-    let allReservationsData = []; // Store all fetched data
+    const reservationFilter = document.getElementById('reservation-filter');
+    const attendanceFilter = document.getElementById('attendance-filter');
+    let allReservationsData = []; // Store all fetched data for filtering
 
     // 日付のフォーマット関数
     const formatDate = (dateString) => {
@@ -50,11 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             const tbody = table.querySelector('tbody');
 
-            // 最初の行はヘッダーと仮定してスキップ
             for (let i = 1; i < dataToRender.length; i++) {
                 const rowData = dataToRender[i];
                 const tr = document.createElement('tr');
-                tr.dataset.originalIndex = i; // Use a clear name for the original index
+                // Find the original index from the full dataset
+                const originalIndex = allReservationsData.findIndex(originalRow => JSON.stringify(originalRow) === JSON.stringify(rowData));
+                tr.dataset.originalIndex = originalIndex;
 
                 const currentStatus = rowData[5] || '未定';
 
@@ -106,8 +109,22 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 throw new Error(result.message || '取得したデータの形式が正しくありません。');
             }
-            
-            renderTable(allReservationsData); // Render the full table directly
+
+            const data = allReservationsData;
+
+            if (data && data.length > 1) {
+                reservationFilter.innerHTML = '<option value="all">すべて表示</option>';
+                for (let i = 1; i < data.length; i++) {
+                    const rowData = data[i];
+                    const combinedText = `${rowData[0] || ''} - ${rowData[1] || ''} - ${formatDate(rowData[2])} - ${rowData[3] || ''} - ${formatTime(rowData[4])}`;
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = combinedText;
+                    reservationFilter.appendChild(option);
+                }
+            }
+
+            applyFilters();
             
         } catch (error) {
             console.error('Error fetching syuseki list:', error);
@@ -115,8 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const updateAttendance = async (rowIndex, status) => {
-        const rowData = allReservationsData[rowIndex];
+    const updateAttendance = async (originalIndex, status) => {
+        if (originalIndex === -1) {
+            alert('元のデータが見つからず、更新できませんでした。');
+            return;
+        }
+        const rowData = allReservationsData[originalIndex];
 
         try {
             const response = await fetch('/api/update_attendance', {
@@ -126,9 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 body: JSON.stringify({ 
                     action: 'update_attendance', 
-                    rowIndex: rowIndex, 
+                    rowIndex: originalIndex,
                     status: status,
-                    rowData: rowData // Add the full row data
+                    rowData: rowData
                 })
             });
             if (!response.ok) {
@@ -136,18 +157,74 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const result = await response.json();
             if (result.result === 'success') {
-                console.log('Attendance updated successfully:', result.message);
-                // Optionally, provide user feedback
                 alert(result.message || '出席状況を更新しました！');
-                // Re-fetch and re-render to show updated status
-                fetchSyusekiList(); 
+                fetchSyusekiList();
             } else {
-                console.error('Failed to update attendance:', result.message);
-                alert('出席状況の更新に失敗しました: ' + result.message);
+                throw new Error(result.message || '出席状況の更新に失敗しました。');
             }
         } catch (error) {
             console.error('Error updating attendance:', error);
-            alert('出席状況の更新中にエラーが発生しました。');
+            alert(error.message);
         }
     };
+
+    const applyFilters = () => {
+        const selectedReservationIndex = reservationFilter.value;
+        let filteredData = [allReservationsData[0]];
+
+        if (selectedReservationIndex === 'all') {
+            filteredData = allReservationsData;
+        } else {
+            filteredData.push(allReservationsData[selectedReservationIndex]);
+        }
+        renderTable(filteredData);
+    };
+
+    reservationFilter.addEventListener('change', applyFilters);
+
+    const saveFilterButton = document.getElementById('save-filter-button');
+    if (saveFilterButton) {
+        saveFilterButton.addEventListener('click', async () => {
+            const selectedReservationIndex = reservationFilter.value;
+            const selectedAttendanceStatus = attendanceFilter.value;
+
+            const currentTableRows = Array.from(syusekiListContainer.querySelectorAll('tbody tr'));
+            const dataToSave = [allReservationsData[0]];
+            currentTableRows.forEach(row => {
+                const originalIndex = parseInt(row.dataset.originalIndex);
+                if (!isNaN(originalIndex)) {
+                    dataToSave.push(allReservationsData[originalIndex]);
+                }
+            });
+
+            try {
+                const response = await fetch('/api/save_filtered_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'save_filtered_data',
+                        reservationFilter: selectedReservationIndex,
+                        attendanceFilter: selectedAttendanceStatus,
+                        filteredData: dataToSave
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+                if (result.result === 'success') {
+                    alert('フィルターされたデータを新しいシートに保存しました！');
+                } else {
+                    alert('データの保存に失敗しました: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error saving filtered data:', error);
+                alert('フィルターされたデータの保存中にエラーが発生しました。' + error.message);
+            }
+        });
+    }
+
+    fetchSyusekiList();
 });
