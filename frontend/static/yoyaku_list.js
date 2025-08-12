@@ -7,9 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const data = await response.json();
+            const responseJson = await response.json();
+            const data = responseJson.data;
 
-            if (data && data.length > 0) {
+            if (data && Array.isArray(data) && data.length > 0) {
                 // ヘッダー行をスキップしてデータを表示
                 const table = document.createElement('table');
                 table.innerHTML = `
