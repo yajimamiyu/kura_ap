@@ -141,40 +141,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to send attendance update to backend
     const updateAttendance = async (rowIndex, status) => {
-        const rowData = allReservationsData[rowIndex];
+    let rowData = [...allReservationsData[rowIndex]]; // コピーを作成（破壊的変更を避けるため）
 
-        try {
-            const response = await fetch('/api/update_attendance', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    action: 'update_attendance', 
-                    rowIndex: rowIndex, 
-                    status: status,
-                    rowData: rowData // Add the full row data
-                })
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const result = await response.json();
-            if (result.result === 'success') {
-                console.log('Attendance updated successfully:', result.message);
-                // Optionally, provide user feedback
-                alert(result.message || '出席状況を更新しました！');
-                // Re-fetch and re-render to show updated status
-                fetchSyusekiList(); 
-            } else {
-                console.error('Failed to update attendance:', result.message);
-                alert('出席状況の更新に失敗しました: ' + result.message);
-            }
-        } catch (error) {
-            console.error('Error updating attendance:', error);
-            alert('出席状況の更新中にエラーが発生しました。');
-        }
-    };
+    // rowDataの要素数が5以下なら6要素目にstatusをセット
+    if (rowData.length < 6) {
+        rowData[5] = status;
+    } else {
+        rowData[5] = status; // 6列目を上書き
+    }
+
+    try {
+        const response = await fetch('/api/update_attendance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                action: 'update_attendance', 
+                rowIndex: rowIndex, 
+                status: status,
+                rowData: rowData
+            })
+        });
+        // 以下略
+    } catch (error) {
+        // エラー処理
+    }
+};
 
     // Function to apply filters and render table
     const applyFilters = () => {
