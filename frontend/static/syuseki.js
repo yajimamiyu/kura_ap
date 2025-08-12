@@ -132,41 +132,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const updateAttendance = async (originalIndex, status) => {
-        if (originalIndex === -1) {
-            alert('元のデータが見つからず、更新できませんでした。');
-            return;
-        }
-        const rowData = allReservationsData[originalIndex];
+    const updateAttendance = async (rowIndex, status) => {
+  let rowData = [...allReservationsData[rowIndex]];
 
-        try {
-            const response = await fetch('/api/update_attendance', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    action: 'update_attendance', 
-                    rowIndex: originalIndex,
-                    status: status,
-                    rowData: rowData
-                })
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const result = await response.json();
-            if (result.result === 'success') {
-                alert(result.message || '出席状況を更新しました！');
-                fetchSyusekiList();
-            } else {
-                throw new Error(result.message || '出席状況の更新に失敗しました。');
-            }
-        } catch (error) {
-            console.error('Error updating attendance:', error);
-            alert(error.message);
-        }
-    };
+  if (rowData.length < 6) {
+    rowData[5] = status;
+  } else {
+    rowData[5] = status;
+  }
+
+  console.log("送信データ:", { action: 'update_attendance', rowIndex, status, rowData });
+
+  try {
+    const response = await fetch('/api/update_attendance', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'update_attendance',
+        rowIndex: rowIndex,
+        status: status,
+        rowData: rowData
+      })
+    });
+    if (!response.ok) {
+      throw new Error('HTTP error! status: ' + response.status);
+    }
+    const result = await response.json();
+    if (result.result === 'success') {
+      alert('更新成功: ' + result.message);
+    } else {
+      throw new Error(result.message || '更新失敗');
+    }
+  } catch (error) {
+    console.error('Error updating attendance:', error);
+    alert('出席状況の更新に失敗しました: ' + error.message);
+  }
+};
+
 
     const applyFilters = () => {
         const selectedReservationIndex = reservationFilter.value;
