@@ -116,44 +116,38 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const updateAttendance = async (rowIndex, status) => {
-    let rowData = [...allReservationsData[rowIndex]];
+        const rowData = allReservationsData[rowIndex];
 
-    if (rowData.length < 6) {
-        rowData[5] = status;
-    } else {
-        rowData[5] = status;
-    }
-
-    console.log("送信データ:", { action: 'update_attendance', rowIndex, status, rowData });
-
-    try {
-        const response = await fetch('/api/update_attendance', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: 'update_attendance',
-                rowIndex: rowIndex,
-                status: status,
-                rowData: rowData
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        try {
+            const response = await fetch('/api/update_attendance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    action: 'update_attendance', 
+                    rowIndex: rowIndex, 
+                    status: status,
+                    rowData: rowData // Add the full row data
+                })
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const result = await response.json();
+            if (result.result === 'success') {
+                console.log('Attendance updated successfully:', result.message);
+                // Optionally, provide user feedback
+                alert(result.message || '出席状況を更新しました！');
+                // Re-fetch and re-render to show updated status
+                fetchSyusekiList(); 
+            } else {
+                console.error('Failed to update attendance:', result.message);
+                alert('出席状況の更新に失敗しました: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error updating attendance:', error);
+            alert('出席状況の更新中にエラーが発生しました。');
         }
-
-        const result = await response.json();
-        if (result.result === 'success') {
-            alert('出席状況を更新しました。');
-            // 必要に応じてリスト再取得
-            await fetchSyusekiList();
-        } else {
-            alert('更新に失敗しました: ' + result.message);
-        }
-
-    } catch (error) {
-        console.error('出席状況の更新中にエラー:', error);
-        alert('更新中にエラーが発生しました。');
-    }
-};
+    };
 });
