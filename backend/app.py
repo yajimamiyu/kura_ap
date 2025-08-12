@@ -123,16 +123,23 @@ def get_all_yoyaku():
     # 新しいdoGetに合わせて、'sheet'パラメータで「予約」シートを指定
     params = {'sheet': '予約'}
 
+    print(f"--- Requesting GAS URL: {gas_url} with params: {params} ---") # Debug print
+
     try:
         response_gas = requests.get(gas_url, params=params)
+        print(f"--- GAS Response Status Code: {response_gas.status_code} ---") # Debug print
+        print(f"--- GAS Response Text: {response_gas.text} ---") # Debug print
         response_gas.raise_for_status()
         gas_data = response_gas.json()
+        print(f"--- Parsed GAS Data: {gas_data} ---") # Debug print
         return jsonify(gas_data)
 
     except requests.exceptions.RequestException as e:
+        print(f"--- requests.get() failed ---") # Debug print
         print(f"Error contacting GAS: {e}")
         return jsonify({'result': 'error', 'message': 'Could not connect to the service.'}), 500
     except ValueError:
+        print(f"--- response.json() failed. Response was not valid JSON. ---") # Debug print
         return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
 
 @app.route('/api/update_attendance', methods=['POST'])
