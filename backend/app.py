@@ -138,21 +138,26 @@ def get_all_yoyaku():
 @app.route('/api/update_attendance', methods=['POST'])
 def update_syuseki_attendance():
     print("--- /api/update_attendance was called ---") # For debugging
-    print(f"--- Data received from frontend: {request.get_json()} ---") # For debugging
     data = request.get_json()
+    print(f"--- Data received from frontend: {data} ---") # For debugging
     gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
     data['action'] = 'update_attendance' # Action for GAS
 
     try:
+        print(f"--- Sending data to GAS: {data} ---")
         response_gas = requests.post(gas_url, json=data)
+        print(f"--- GAS Response Status Code: {response_gas.status_code} ---")
+        print(f"--- GAS Response Text: {response_gas.text} ---")
         response_gas.raise_for_status()
         gas_data = response_gas.json()
         return jsonify(gas_data)
 
     except requests.exceptions.RequestException as e:
+        print(f"--- requests.post() failed ---")
         print(f"Error contacting GAS: {e}")
         return jsonify({'result': 'error', 'message': 'Could not connect to the service.'}), 500
     except ValueError:
+        print(f"--- response.json() failed. Response was not valid JSON. ---")
         return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
 
 
