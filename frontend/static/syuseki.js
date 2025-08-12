@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     const response = await fetch('/api/update_attendance', {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         action: 'update_attendance',
         rowIndex: rowIndex,
