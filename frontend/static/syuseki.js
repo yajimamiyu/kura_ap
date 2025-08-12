@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
   try {
     const response = await fetch('/api/update_attendance', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
         action: 'update_attendance',
         rowIndex: rowIndex,
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch('/api/save_filtered_data', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'text/plain',
                     },
                     body: JSON.stringify({
                         action: 'save_filtered_data',
