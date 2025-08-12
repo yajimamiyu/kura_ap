@@ -119,30 +119,26 @@ def get_attendance():
 
 @app.route('/api/get_all_yoyaku')
 def get_all_yoyaku():
-    print("--- /api/get_all_yoyaku was called ---") # For debugging
     gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
+    # 新しいdoGetに合わせて、'sheet'パラメータで「予約」シートを指定
     params = {'sheet': '予約'}
 
     try:
         response_gas = requests.get(gas_url, params=params)
-        # --- Add more logs for debugging ---
-        print(f"--- GAS Response Status Code: {response_gas.status_code} ---")
-        print(f"--- GAS Response Text: {response_gas.text} ---")
-        # -----------------------------------
         response_gas.raise_for_status()
         gas_data = response_gas.json()
         return jsonify(gas_data)
 
     except requests.exceptions.RequestException as e:
-        print(f"--- requests.get() failed ---")
         print(f"Error contacting GAS: {e}")
         return jsonify({'result': 'error', 'message': 'Could not connect to the service.'}), 500
     except ValueError:
-        print(f"--- response.json() failed. Response was not valid JSON. ---")
         return jsonify({'result': 'error', 'message': 'Invalid response from GAS (not JSON)'}), 500
 
 @app.route('/api/update_attendance', methods=['POST'])
 def update_syuseki_attendance():
+    print("--- /api/update_attendance was called ---") # For debugging
+    print(f"--- Data received from frontend: {request.get_json()} ---") # For debugging
     data = request.get_json()
     gas_url = 'https://script.google.com/macros/s/AKfycbxzDy3Rh_NHfCN7PkbfhH6pc4ne_h1iWospJQD8aB8qZuuwJKUCVhVJuysv2z4YgXXTag/exec'
     data['action'] = 'update_attendance' # Action for GAS
